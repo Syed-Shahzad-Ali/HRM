@@ -1,5 +1,5 @@
 from django import forms
-from django_filters import DateFilter, CharFilter, FilterSet, ChoiceFilter, BooleanFilter
+from django_filters import DateFilter, CharFilter, FilterSet
 from .models import *
 
 
@@ -15,8 +15,8 @@ class EmployeeFilter(FilterSet):
 
     class Meta:
         model = Employee
-        # fields ='_all_'
-        exclude = ['image']  # Exclude the 'image' field from the form
+        fields ='__all__'
+        # exclude = ['image']  # Exclude the 'image' field from the form
 
 class DepartmentFilter(FilterSet):
     id = CharFilter(field_name='id')

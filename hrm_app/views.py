@@ -1,20 +1,16 @@
-from django.shortcuts import render
-from .models import Make , Vehicle
 from django.shortcuts import render,HttpResponse
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
-from .serializer import MakeSerializer,VehicleSerializer
 from utils.base_authentication import JWTAuthentication
-
-from .controller import MakeController, VehicleController
-
+from .hrm_controller import DepartmentController, EmployeeController, ManagerController, RankController, SalaryController
 
 
-department = DepartmentController()
-rank =RankController()
-manager =ManagerDepartmentController()
-employee= EmployeeController()
-salary=SalaryController()
+
+department_controller = DepartmentController()
+rank_controller =RankController()
+manager_controller =ManagerController()
+employee_controller= EmployeeController()
+salary_controller=SalaryController()
 
 
 
@@ -23,7 +19,7 @@ class DepartmentViews(ModelViewSet):
 
 
      def post_department(self,request):
-       return department_controller.created(request)
+       return department_controller.create(request)
      
      def get_department(self,request):
        return department_controller.get_department(request)
@@ -43,7 +39,7 @@ class RankViews(ModelViewSet):
 
 
      def post_rank(self,request):
-       return rank_controller.created(request)
+       return rank_controller.create(request)
      
      def get_rank(self,request):
        return rank_controller.get_rank(request)
@@ -62,7 +58,7 @@ class ManagerViews(ModelViewSet):
   
 
     def post_manager(self, request):
-        return manager_controller.created(request)
+        return manager_controller.create(request)
 
     def get_manager(self, request):
         return manager_controller.get_manager(request)
@@ -80,7 +76,7 @@ class EmployeeViews(ModelViewSet):
     
 
     def post_employee(self, request):
-        return employee_controller.created(request)
+        return employee_controller.create(request)
 
     def get_employee(self, request):
         return employee_controller.get_employee(request)
@@ -98,7 +94,7 @@ class SalaryViews(ModelViewSet):
     
 
     def post_salary(self, request):
-        return salary_controller.created(request)
+        return salary_controller.create(request)
 
     def get_salary(self, request):
         return salary_controller.get_salary(request)
