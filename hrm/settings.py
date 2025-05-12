@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'user_auth'
+    'user_auth',
+    'hrm_app'
 ]
 
 MIDDLEWARE = [
