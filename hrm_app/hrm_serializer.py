@@ -10,13 +10,19 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+
+        # Remove the department ID
+        data.pop('department', None)
+
+        # Add department name
+        data['department_name'] = instance.department.name if instance.department else None
+
+        # Handle created_by and updated_by
         data['created_by'] = UserListingSerializer(instance.created_by).data if instance.created_by else None
         data['updated_by'] = UserListingSerializer(instance.updated_by).data if instance.updated_by else None
-        # data['dept_name'] = instance.employee_has_dept.dept_name if instance.employee_has_dept else None
-        # data['role_name'] = instance.employee_has_role.name if instance.employee_has_role else None
-        
 
         return data
+
 
 
 class DepartmentSerializer(serializers.ModelSerializer):

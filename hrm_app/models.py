@@ -43,7 +43,7 @@ class Employee(models.Model):
     rank = models.ForeignKey(Rank, on_delete=models.CASCADE, related_name='ranks',null =True, blank=True)
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE, related_name='managers',null =True, blank=True)
     job_title = models.CharField(max_length=100)
-    hire_date = models.DateField()
+    hire_date = models.DateField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_employee', null=True,blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name='employee_created_by', null=True, blank=True)
