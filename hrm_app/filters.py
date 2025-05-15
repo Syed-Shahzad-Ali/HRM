@@ -4,6 +4,7 @@ from .models import *
 
 
 
+
 class EmployeeFilter(FilterSet):
     id = CharFilter(field_name='id')
     name = CharFilter(field_name='name', lookup_expr='icontains')

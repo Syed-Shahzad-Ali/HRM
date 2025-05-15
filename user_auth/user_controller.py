@@ -113,7 +113,12 @@ class RegisterController:
     
 
 
-class LoginController():
+from rest_framework import status
+from rest_framework.response import Response
+from django.utils import timezone
+from django.contrib.auth import authenticate
+
+class LoginController:
     serializer_class = LoginSerializer
 
     def login(self, request):
@@ -127,7 +132,7 @@ class LoginController():
                 }, status=status.HTTP_400_BAD_REQUEST)
 
             # Authenticate the user
-            user = authenticate(username=request.data['username'], password=request.data['password'])
+            user = authenticate(email=request.data['email'], password=request.data['password'])
             if not user:
                 return Response({
                     "message": "Incorrect email or password"
@@ -140,20 +145,15 @@ class LoginController():
                 }, status=status.HTTP_403_FORBIDDEN)
 
             # Initialize the permissions dictionary dynamically
-            # permissions_dict = {perm.code: False for perm in Permission.objects.all()}
+            permissions_dict = {perm.code: False for perm in Permission.objects.all()}
 
-            # # Check if the user is a superuser
-            # if user.is_superuser:
-            #     all_permissions = Permission.objects.all()
-            #     for perm in all_permissions:
-            #         if perm.code in permissions_dict:
-            #             permissions_dict[perm.code] = True
-            # elif user.role:
-            #     # Fetch permissions based on the user's role
-            #     role_permissions = user.role.permissions.all()
-            #     for perm in role_permissions:
-            #         if perm.code in permissions_dict:
-            #             permissions_dict[perm.code] = True
+            # Check if the user is a superuser or has a role with permissions
+            if user.is_superuser:
+                for perm in Permission.objects.all():
+                    permissions_dict[perm.code] = True
+            elif user.role:
+                for perm in user.role.permissions.all():
+                    permissions_dict[perm.code] = True
 
             # Prepare the response data
             response_data = {
@@ -161,9 +161,9 @@ class LoginController():
                 "name": user.get_full_name(),
                 "username": user.username,
                 "email": user.email,
-                # "role": user.role.id if user.role else None,  # Include role ID in the response
-                # "permissions": permissions_dict  # Ensure permissions are included in the response
-
+                "role_id": user.role.id if user.role else None,
+                "role_name": user.role.name if user.role else None,
+                "permissions": permissions_dict
             }
 
             # Update or create the user's token
@@ -175,7 +175,7 @@ class LoginController():
             user.last_login = timezone.now()
             user.save()
 
-            # Return response data including permissions and role ID
+            # Return the response without setting session or CSRF cookies
             return Response({
                 "message": "Successful",
                 "data": response_data
@@ -186,7 +186,6 @@ class LoginController():
                 "message": "Unsuccessful",
                 "error": str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 
 

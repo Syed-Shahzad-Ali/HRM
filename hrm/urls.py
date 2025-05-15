@@ -20,6 +20,10 @@ from django.urls import include, path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('user_auth.urls')),
-    path('hrm/', include('hrm_app.urls'))
+    path('hrm/', include('hrm_app.urls')),
+    path('hrm2/', include('hrm2.urls')),
+    path('permission/', include('permissions.urls'))
+
+
 
 ]

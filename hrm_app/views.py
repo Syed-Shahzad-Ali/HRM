@@ -1,6 +1,7 @@
 from django.shortcuts import render,HttpResponse
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
+from permissions.decorator import permission_required
 from utils.base_authentication import JWTAuthentication
 from .hrm_controller import DepartmentController, EmployeeController, ManagerController, RankController, SalaryController
 
@@ -17,16 +18,25 @@ salary_controller=SalaryController()
 class DepartmentViews(ModelViewSet):
      authentication_classes = [JWTAuthentication]
 
-
+     @permission_required(['create_department'])
+      
      def post_department(self,request):
        return department_controller.create(request)
+     
+     @permission_required(['read_department'])
+     
      
      def get_department(self,request):
        return department_controller.get_department(request)
      
+     @permission_required(['update_department'])
+     
+     
      def update_department(self,request):
 
         return department_controller.update_department(request)
+     @permission_required(['delete_department'])
+     
      
      def delete_department(self,request):
         return department_controller.delete_department(request)
@@ -74,17 +84,17 @@ class ManagerViews(ModelViewSet):
 class EmployeeViews(ModelViewSet):
     authentication_classes = [JWTAuthentication]
     
-
-    def post_employee(self, request):
+    @permission_required(['create_employee'])
+    def create(self, request):
         return employee_controller.create(request)
-
-    def get_employee(self, request):
+    @permission_required(['read_employee'])
+    def list(self, request):
         return employee_controller.get_employee(request)
-
-    def update_employee(self, request):
+    @permission_required(['update_employee'])
+    def update(self, request):
         return employee_controller.update_employee(request)
-
-    def delete_employee(self, request):
+    @permission_required(['delete_employee'])
+    def destroy(self, request):
         return employee_controller.delete_employee(request)    
     
 

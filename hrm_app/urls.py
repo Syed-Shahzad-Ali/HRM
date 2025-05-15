@@ -20,10 +20,10 @@ urlpatterns=[
                                                 "delete":"delete_manager" })),
         
 
-        path('employee', EmployeeViews.as_view({"get":"get_employee",
-                                                "post":"post_employee",
-                                                "patch":"update_employee",
-                                                "delete":"delete_employee" })),
+        path('employee', EmployeeViews.as_view({"get":"create",
+                                                "post":"list",
+                                                "patch":"update",
+                                                "delete":"destroy" })),
 
         path('salary', SalaryViews.as_view({"get":"get_salary",
                                                 "post":"post_salary",

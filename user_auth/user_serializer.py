@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
+from permissions.models import Permission
 from user_auth.models import User
 # from permissions.models import Role, Permission
 # from permissions.permission_serializer import PermissionSerializer
@@ -91,8 +92,8 @@ class ForgetPasswordSerializer(serializers.Serializer):
 
 
 class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField(
-        label="username",
+    email = serializers.CharField(
+        label="email",
         trim_whitespace=True,
         write_only=True
     )
@@ -104,14 +105,14 @@ class LoginSerializer(serializers.Serializer):
     )
 
     def validate(self, data):
-        username = data.get('username')
+        email = data.get('email')
         password = data.get('password')
 
         # Check if the user exists
         try:
-            user = User.objects.get(username=username)
+            user = User.objects.get(email=email)
         except User.DoesNotExist:
-            raise serializers.ValidationError("Invalid username or password.", code='authentication')
+            raise serializers.ValidationError("Invalid email or password.", code='authentication')
 
         # Check if the account is active and not locked
         if not user.is_active or user.is_locked:
@@ -119,7 +120,7 @@ class LoginSerializer(serializers.Serializer):
 
         # Check the password
         if not user.check_password(password):
-            raise serializers.ValidationError("Invalid username or password.", code='authentication')
+            raise serializers.ValidationError("Invalid email or password.", code='authentication')
 
         # Attach the user to the data for use in to_representation
         data['user'] = user
@@ -144,22 +145,22 @@ class LoginSerializer(serializers.Serializer):
         #     "update_employee": False,
         #     "delete_employee": False
         # }
-        # permissions_dict = {perm.code: False for perm in Permission.objects.all()}
+        permissions_dict = {perm.code: False for perm in Permission.objects.all()}
 
 
-        # # Check if the user is a superuser
-        # if user.is_superuser:
-        #     all_permissions = Permission.objects.all()
-        #     for perm in all_permissions:
-        #         if perm.code in permissions_dict:
-        #             permissions_dict[perm.code] = True
-        # elif user.role:
-        #     role_permissions = user.role.permissions.all()
-        #     for perm in role_permissions:
-        #         if perm.code in permissions_dict:
-        #             permissions_dict[perm.code] = True
+        # Check if the user is a superuser
+        if user.is_superuser:
+            all_permissions = Permission.objects.all()
+            for perm in all_permissions:
+                if perm.code in permissions_dict:
+                    permissions_dict[perm.code] = True
+        elif user.role:
+            role_permissions = user.role.permissions.all()
+            for perm in role_permissions:
+                if perm.code in permissions_dict:
+                    permissions_dict[perm.code] = True
 
-        # response_data['permissions'] = permissions_dict
+        response_data['permissions'] = permissions_dict
 
         return response_data
 
